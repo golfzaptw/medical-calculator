@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+    <!-- Header -->
+    <header class="text-center mb-4">
+        <h1 class="fw-bold text-primary">Medical Calculator</h1>
+        <p class="text-secondary">Calculate precise drug dosages based on patient weight</p>
+    </header>
+
+    <!-- Input Card -->
+    <div class="card shadow-sm p-4 mb-4">
+        <form id="weightForm">
+            <div class="mb-3">
+                <label for="weight" class="form-label">Patient Weight (kg)</label>
+                <input type="number" id="weight" class="form-control" placeholder="Enter weight in kg" step="0.1" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Calculate Dosages</button>
+        </form>
+        <div id="error" class="alert alert-danger mt-3 d-none"></div>
+        <div id="success" class="alert alert-success mt-3 d-none">Calculations completed successfully!</div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="d-none">
+        <!-- Drug Calculations -->
+        <div class="card shadow-sm p-4 mb-4">
+            <h2 class="h5 fw-bold">Drug Calculations</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Drug Name</th>
+                            <th>Dose 1</th>
+                            <th>Dose 2</th>
+                            <th>Result Dose 1</th>
+                            <th>Result Dose 2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drugTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Local Anesthetic Calculations -->
+        <div class="card shadow-sm p-4 mb-4">
+            <h2 class="h5 fw-bold">Local Anesthetic Calculations</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Drug Name</th>
+                            <th>Dose</th>
+                            <th>Result Dose 1</th>
+                            <th>Result Dose 2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="macaineTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Propofol Calculations -->
+        <div class="card shadow-sm p-4">
+            <h2 class="h5 fw-bold">Propofol IV Drip Calculations</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Drug Name</th>
+                            <th>C Value</th>
+                            <th>Results</th>
+                            <th>25 mcg/kg/min</th>
+                            <th>75 mcg/kg/min</th>
+                        </tr>
+                    </thead>
+                    <tbody id="propofolTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const roundDown = (value) => Math.floor(value * 100) / 100;
+    const drugs = [
+            { name: "Fentanyl", dose1: 1, dose2: 2 },
+            { name: "Propofol", dose1: 1.5, dose2: 2.5 },
+            { name: "Nimbex", dose1: 0.15, dose2: 0.2 },
+            { name: "Nimbex", dose1: 0.02, dose2: 0.03 },
+            { name: "Neostigmine", dose1: 0.04, dose2: 0.07 },
+            { name: "Atropine", dose1: 0.02, dose2: 0.04 },
+            { name: "SCH", dose1: 1, dose2: 1.5 },
+            { name: "Thiopental", dose1: 5, dose2: 6 }
+        ];
+
+        const macaineDetails = [
+            { name: "0.5% Macaine", dose1: 2, divide: 5 },
+            { name: "0.5% Macaine c Adr", dose1: 3, divide: 5 },
+            { name: "1% Xylocaine", dose1: 5, divide: 10 },
+            { name: "1% Xylocaine c Adr", dose1: 7, divide: 10 },
+            { name: "2% Xylocaine", dose1: 5, divide: 20 },
+            { name: "2% Xylocaine c Adr", dose1: 7, divide: 20 },
+            { name: "0.5% Chirocaine", dose1: 2, divide: 5 }
+        ];
+
+        const propofolIVDrip = [
+            { name: "Propofol IV Drip", cValue: 10},
+        ]
+
+    document.getElementById('weightForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const weight = parseFloat(document.getElementById('weight').value);
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+        const resultsDiv = document.getElementById('results');
+
+        errorDiv.classList.add('d-none');
+        successDiv.classList.add('d-none');
+        resultsDiv.classList.add('d-none');
+
+        if (weight <= 0 || isNaN(weight)) {
+            errorDiv.textContent = 'Please enter a valid weight greater than 0 kg';
+            errorDiv.classList.remove('d-none');
+            return;
+        }
+
+        const drugTable = document.getElementById('drugTable');
+        drugTable.innerHTML = drugs.map(drug => `
+            <tr>
+                <td>${drug.name}</td>
+                <td>${drug.dose1}</td>
+                <td>${drug.dose2}</td>
+                <td>${roundDown(drug.dose1 * weight)}</td>
+                <td>${roundDown(drug.dose2 * weight)}</td>
+            </tr>
+        `).join('');
+
+        const macaineTable = document.getElementById('macaineTable');
+        macaineTable.innerHTML = macaineDetails.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.dose1}</td>
+                <td>${roundDown(item.dose1 * weight)}</td>
+                <td>${roundDown(item.dose1 * weight / item.divide)}</td>
+            </tr>
+        `).join('');
+
+        const propofolTable = document.getElementById('propofolTable');
+        propofolTable.innerHTML = propofolIVDrip.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.cValue}</td>
+                <td>${roundDown((6 * weight) / (item.cValue * 100))}</td>
+                <td>${roundDown(((6 * weight) / (item.cValue * 100)) * 25)}</td>
+                <td>${roundDown(((6 * weight) / (item.cValue * 100)) * 75)}</td>
+            </tr>
+        `).join('');
+
+        successDiv.classList.remove('d-none');
+        resultsDiv.classList.remove('d-none');
+    });
+</script>
+</body>
+</html>
