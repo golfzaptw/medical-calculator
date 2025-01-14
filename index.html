@@ -1,143 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Calculator</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            border: none;
+        }
+
+        .table thead {
+            background-color: #e9ecef;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        #loadingSpinner {
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-light">
 
-<div class="container my-5">
-    <!-- Header -->
-    <header class="text-center mb-4">
-        <h1 class="fw-bold text-primary">Medical Calculator</h1>
-        <p class="text-secondary">Calculate precise drug dosages based on patient weight</p>
-    </header>
+<body>
 
-    <!-- Input Card -->
-    <div class="card shadow-sm p-4 mb-4">
-        <form id="weightForm">
-            <div class="mb-3">
-                <label for="weight" class="form-label">Patient Weight (kg)</label>
-                <input type="number" id="weight" class="form-control" placeholder="Enter weight in kg" step="0.1" required>
+    <div class="container my-5">
+        <!-- Header -->
+        <header class="text-center mb-5">
+            <h1 class="fw-bold text-primary">Medical Calculator</h1>
+            <p class="text-secondary">Calculate precise drug dosages based on patient weight</p>
+        </header>
+
+        <!-- Input Card -->
+        <div class="card shadow-sm p-4 mb-4">
+            <form id="weightForm">
+                <div class="mb-3">
+                    <label for="weight" class="form-label">Patient Weight (kg)</label>
+                    <input type="number" id="weight" class="form-control" placeholder="Enter weight in kg" step="0.1"
+                        required>
+                    <small id="weightHelp" class="text-muted">Enter a valid weight greater than 0 kg.</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <span id="loadingSpinner" class="spinner-border spinner-border-sm me-2"></span>
+                        Calculate Dosages
+                    </button>
+                    <button type="button" id="clearButton" class="btn btn-secondary w-50">Clear Weight</button>
+                </div>
+            </form>
+            <div id="error" class="alert alert-danger mt-3 d-none"></div>
+            <div id="success" class="alert alert-success mt-3 d-none">Calculations completed successfully!</div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="d-none">
+            <!-- Drug Calculations -->
+            <div class="card shadow-sm p-4 mb-4">
+                <h2 class="h5 fw-bold">Drug Calculations</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Dose (mg/kg)</th>
+                                <th>Dose (mg/kg)</th>
+                                <th>mg</th>
+                                <th>mg</th>
+                            </tr>
+                        </thead>
+                        <tbody id="drugTable"></tbody>
+                    </table>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Calculate Dosages</button>
-        </form>
-        <div id="error" class="alert alert-danger mt-3 d-none"></div>
-        <div id="success" class="alert alert-success mt-3 d-none">Calculations completed successfully!</div>
+
+            <!-- Local Anesthetic Calculations -->
+            <div class="card shadow-sm p-4 mb-4">
+                <h2 class="h5 fw-bold">Local Anesthetic Calculations</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Dose</th>
+                                <th>mg</th>
+                                <th>ml</th>
+                            </tr>
+                        </thead>
+                        <tbody id="macaineTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Propofol Calculations -->
+            <div class="card shadow-sm p-4">
+                <h2 class="h5 fw-bold">Propofol IV Drip Calculations</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>C Value</th>
+                                <th>Results</th>
+                                <th>25 mcg/kg/min</th>
+                                <th>75 mcg/kg/min</th>
+                            </tr>
+                        </thead>
+                        <tbody id="propofolTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Extra -->
+            <div class="card shadow-sm p-4">
+                <h2 class="h5 fw-bold">Extra Calculations</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Dose (mg/kg)</th>
+                                <th>Dose (mg/kg)</th>
+                                <th>mg</th>
+                                <th>mg</th>
+                            </tr>
+                        </thead>
+                        <tbody id="extraTable"></tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Dose (mcg/kg)</th>
+                                <th>Dose (mcg/kg)</th>
+                                <th>mcg/kg</th>
+                                <th>mcg/kg</th>
+                            </tr>
+                        </thead>
+                        <tbody id="extra1Table"></tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>Drug Name</th>
+                                <th>Dose (mcg/kg/hr)</th>
+                                <th>Dose (mcg/kg/hr)</th>
+                                <th>mcg/kg/hr</th>
+                                <th>mcg/kg/hr</th>
+                            </tr>
+                        </thead>
+                        <tbody id="extra2Table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Results Section -->
-    <div id="results" class="d-none">
-        <!-- Drug Calculations -->
-        <div class="card shadow-sm p-4 mb-4">
-            <h2 class="h5 fw-bold">Drug Calculations</h2>
-            <div class="table-responsive">
-                <table class="table table-bordered text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>Dose (mg/kg)</th>
-                            <th>Dose (mg/kg)</th>
-                            <th>mg</th>
-                            <th>mg</th>
-                        </tr>
-                    </thead>
-                    <tbody id="drugTable"></tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Local Anesthetic Calculations -->
-        <div class="card shadow-sm p-4 mb-4">
-            <h2 class="h5 fw-bold">Local Anesthetic Calculations</h2>
-            <div class="table-responsive">
-                <table class="table table-bordered text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>Dose</th>
-                            <th>mg</th>
-                            <th>ml</th>
-                        </tr>
-                    </thead>
-                    <tbody id="macaineTable"></tbody>
-                </table>
-            </div>
-        </div>
+    <script>
 
-        <!-- Propofol Calculations -->
-        <div class="card shadow-sm p-4">
-            <h2 class="h5 fw-bold">Propofol IV Drip Calculations</h2>
-            <div class="table-responsive">
-                <table class="table table-bordered text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>C Value</th>
-                            <th>Results</th>
-                            <th>25 mcg/kg/min</th>
-                            <th>75 mcg/kg/min</th>
-                        </tr>
-                    </thead>
-                    <tbody id="propofolTable"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Extra Calculations -->
-        <div class="card shadow-sm p-4 mb-4">
-            <h2 class="h5 fw-bold">Extra Calculations</h2>
-            <div class="table-responsive">
-                <table class="table table-bordered text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>Dose (mg/kg)</th>
-                            <th>Dose (mg/kg)</th>
-                            <th>mg</th>
-                            <th>mg</th>
-                        </tr>
-                    </thead>
-                    <tbody id="extraTable"></tbody>
-                </table>
-                <table class="table table-bordered text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>Dose (mcg/kg)</th>
-                            <th>Dose (mcg/kg)</th>
-                            <th>mcg/kg</th>
-                            <th>mcg/kg</th>
-                        </tr>
-                    </thead>
-                    <tbody id="extra1Table"></tbody>
-                </table>
-                <table class="table table-bordered text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>Dose (mcg/kg/hr)</th>
-                            <th>Dose (mcg/kg/hr)</th>
-                            <th>mcg/kg/hr</th>
-                            <th>mcg/kg/hr</th>
-                        </tr>
-                    </thead>
-                    <tbody id="extra2Table"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    const roundDown = (value) => Math.floor(value * 100) / 100;
-    const drugs = [
+        const roundDown = (value) => Math.floor(value * 100) / 100;
+        const drugs = [
             { name: "Fentanyl", dose1: 1, dose2: 2 },
             { name: "Propofol", dose1: 1.5, dose2: 2.5 },
             { name: "Nimbex", dose1: 0.15, dose2: 0.2 },
@@ -159,43 +217,49 @@
         ];
 
         const propofolIVDrip = [
-            { name: "Propofol IV Drip", cValue: 10},
+            { name: "Propofol IV Drip", cValue: 10 },
         ]
 
         const extra = [
-			{ name: "Etomidate", dose1: 0.2, dose2: 0.3 },
-			{ name: "Rocuronium", dose1: 0.6, dose2: 1.2 },
-			{ name: "Rocuronium (maintenance)", dose1: 0.1, dose2: 0.1 },
-			{ name: "Sugammadex", dose1: 2, dose2: 4 },
+            { name: "Etomidate", dose1: 0.2, dose2: 0.3 },
+            { name: "Rocuronium", dose1: 0.6, dose2: 1.2 },
+            { name: "Rocuronium (maintenance)", dose1: 0.1, dose2: 0.1 },
+            { name: "Sugammadex", dose1: 2, dose2: 4 },
         ]
 
-		const extra1 = [
-			{ name: "Dexmedetomidine (load)", dose1: 0.5, dose2: 1 },
-		]
+        const extra1 = [
+            { name: "Dexmedetomidine (load)", dose1: 0.5, dose2: 1 },
+        ]
 
-		const extra2 = [
-			{ name: "Dexmedetomidine (infusion)", dose1: 0.1, dose2: 1 },
-		]
+        const extra2 = [
+            { name: "Dexmedetomidine (infusion)", dose1: 0.1, dose2: 1 },
+        ]
 
-    document.getElementById('weightForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const weight = parseFloat(document.getElementById('weight').value);
-        const errorDiv = document.getElementById('error');
-        const successDiv = document.getElementById('success');
-        const resultsDiv = document.getElementById('results');
 
-        errorDiv.classList.add('d-none');
-        successDiv.classList.add('d-none');
-        resultsDiv.classList.add('d-none');
+        document.getElementById('weightForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const weight = parseFloat(document.getElementById('weight').value);
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+            const resultsDiv = document.getElementById('results');
+            const spinner = document.getElementById('loadingSpinner');
 
-        if (weight <= 0 || isNaN(weight)) {
-            errorDiv.textContent = 'Please enter a valid weight greater than 0 kg';
-            errorDiv.classList.remove('d-none');
-            return;
-        }
+            errorDiv.classList.add('d-none');
+            successDiv.classList.add('d-none');
+            resultsDiv.classList.add('d-none');
+            spinner.style.display = 'inline-block';
 
-        const drugTable = document.getElementById('drugTable');
-        drugTable.innerHTML = drugs.map(drug => `
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                if (weight <= 0 || isNaN(weight)) {
+                    errorDiv.textContent = 'Please enter a valid weight greater than 0 kg';
+                    errorDiv.classList.remove('d-none');
+                    return;
+                }
+
+
+                const drugTable = document.getElementById('drugTable');
+                drugTable.innerHTML = drugs.map(drug => `
             <tr>
                 <td>${drug.name}</td>
                 <td>${drug.dose1}</td>
@@ -205,8 +269,8 @@
             </tr>
         `).join('');
 
-        const macaineTable = document.getElementById('macaineTable');
-        macaineTable.innerHTML = macaineDetails.map(item => `
+                const macaineTable = document.getElementById('macaineTable');
+                macaineTable.innerHTML = macaineDetails.map(item => `
             <tr>
                 <td>${item.name}</td>
                 <td>${item.dose1}</td>
@@ -215,8 +279,8 @@
             </tr>
         `).join('');
 
-        const propofolTable = document.getElementById('propofolTable');
-        propofolTable.innerHTML = propofolIVDrip.map(item => `
+                const propofolTable = document.getElementById('propofolTable');
+                propofolTable.innerHTML = propofolIVDrip.map(item => `
             <tr>
                 <td>${item.name}</td>
                 <td>${item.cValue}</td>
@@ -226,8 +290,8 @@
             </tr>
         `).join('');
 
-        const extraTable = document.getElementById('extraTable');
-        extraTable.innerHTML = extra.map(drug => `
+                const extraTable = document.getElementById('extraTable');
+                extraTable.innerHTML = extra.map(drug => `
             <tr>
                 <td>${drug.name}</td>
                 <td>${drug.dose1}</td>
@@ -237,8 +301,8 @@
             </tr>
         `).join('');
 
-        const extra1Table = document.getElementById('extra1Table');
-        extra1Table.innerHTML = extra1.map(drug => `
+                const extra1Table = document.getElementById('extra1Table');
+                extra1Table.innerHTML = extra1.map(drug => `
             <tr>
                 <td>${drug.name}</td>
                 <td>${drug.dose1}</td>
@@ -248,8 +312,8 @@
             </tr>
         `).join('');
 
-        const extra2Table = document.getElementById('extra2Table');
-        extra2Table.innerHTML = extra2.map(drug => `
+                const extra2Table = document.getElementById('extra2Table');
+                extra2Table.innerHTML = extra2.map(drug => `
             <tr>
                 <td>${drug.name}</td>
                 <td>${drug.dose1}</td>
@@ -259,9 +323,22 @@
             </tr>
         `).join('');
 
-        successDiv.classList.remove('d-none');
-        resultsDiv.classList.remove('d-none');
-    });
-</script>
+                successDiv.classList.remove('d-none');
+                resultsDiv.classList.remove('d-none');
+            }, 1000);
+        });
+
+        // Clear Weight Button Functionality
+        document.getElementById('clearButton').addEventListener('click', function () {
+            const weightInput = document.getElementById('weight');
+            weightInput.value = ''; // Clear the input value
+            weightInput.focus(); // Focus back on the input field
+            document.getElementById('error').classList.add('d-none'); // Hide error message
+            document.getElementById('success').classList.add('d-none'); // Hide success message
+            document.getElementById('results').classList.add('d-none'); // Hide results
+        });
+
+    </script>
 </body>
+
 </html>
