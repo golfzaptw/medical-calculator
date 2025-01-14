@@ -39,10 +39,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>Drug Name</th>
-                            <th>Dose 1</th>
-                            <th>Dose 2</th>
-                            <th>Result Dose 1</th>
-                            <th>Result Dose 2</th>
+                            <th>Dose (mg/kg)</th>
+                            <th>Dose (mg/kg)</th>
+                            <th>mg</th>
+                            <th>mg</th>
                         </tr>
                     </thead>
                     <tbody id="drugTable"></tbody>
@@ -59,8 +59,8 @@
                         <tr>
                             <th>Drug Name</th>
                             <th>Dose</th>
-                            <th>Result Dose 1</th>
-                            <th>Result Dose 2</th>
+                            <th>mg</th>
+                            <th>ml</th>
                         </tr>
                     </thead>
                     <tbody id="macaineTable"></tbody>
@@ -86,6 +86,49 @@
                 </table>
             </div>
         </div>
+
+        <!-- Extra Calculations -->
+        <div class="card shadow-sm p-4 mb-4">
+            <h2 class="h5 fw-bold">Extra Calculations</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Drug Name</th>
+                            <th>Dose (mg/kg)</th>
+                            <th>Dose (mg/kg)</th>
+                            <th>mg</th>
+                            <th>mg</th>
+                        </tr>
+                    </thead>
+                    <tbody id="extraTable"></tbody>
+                </table>
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Drug Name</th>
+                            <th>Dose (mcg/kg)</th>
+                            <th>Dose (mcg/kg)</th>
+                            <th>mcg/kg</th>
+                            <th>mcg/kg</th>
+                        </tr>
+                    </thead>
+                    <tbody id="extra1Table"></tbody>
+                </table>
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Drug Name</th>
+                            <th>Dose (mcg/kg/hr)</th>
+                            <th>Dose (mcg/kg/hr)</th>
+                            <th>mcg/kg/hr</th>
+                            <th>mcg/kg/hr</th>
+                        </tr>
+                    </thead>
+                    <tbody id="extra2Table"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -98,7 +141,7 @@
             { name: "Fentanyl", dose1: 1, dose2: 2 },
             { name: "Propofol", dose1: 1.5, dose2: 2.5 },
             { name: "Nimbex", dose1: 0.15, dose2: 0.2 },
-            { name: "Nimbex", dose1: 0.02, dose2: 0.03 },
+            { name: "Nimbex (maintenance)", dose1: 0.02, dose2: 0.03 },
             { name: "Neostigmine", dose1: 0.04, dose2: 0.07 },
             { name: "Atropine", dose1: 0.02, dose2: 0.04 },
             { name: "SCH", dose1: 1, dose2: 1.5 },
@@ -118,6 +161,21 @@
         const propofolIVDrip = [
             { name: "Propofol IV Drip", cValue: 10},
         ]
+
+        const extra = [
+			{ name: "Etomidate", dose1: 0.2, dose2: 0.3 },
+			{ name: "Rocuronium", dose1: 0.6, dose2: 1.2 },
+			{ name: "Rocuronium (maintenance)", dose1: 0.1, dose2: 0.1 },
+			{ name: "Sugammadex", dose1: 2, dose2: 4 },
+        ]
+
+		const extra1 = [
+			{ name: "Dexmedetomidine (load)", dose1: 0.5, dose2: 1 },
+		]
+
+		const extra2 = [
+			{ name: "Dexmedetomidine (infusion)", dose1: 0.1, dose2: 1 },
+		]
 
     document.getElementById('weightForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -165,6 +223,39 @@
                 <td>${roundDown((6 * weight) / (item.cValue * 100))}</td>
                 <td>${roundDown(((6 * weight) / (item.cValue * 100)) * 25)}</td>
                 <td>${roundDown(((6 * weight) / (item.cValue * 100)) * 75)}</td>
+            </tr>
+        `).join('');
+
+        const extraTable = document.getElementById('extraTable');
+        extraTable.innerHTML = extra.map(drug => `
+            <tr>
+                <td>${drug.name}</td>
+                <td>${drug.dose1}</td>
+                <td>${drug.dose2}</td>
+                <td>${roundDown(drug.dose1 * weight)}</td>
+                <td>${roundDown(drug.dose2 * weight)}</td>
+            </tr>
+        `).join('');
+
+        const extra1Table = document.getElementById('extra1Table');
+        extra1Table.innerHTML = extra1.map(drug => `
+            <tr>
+                <td>${drug.name}</td>
+                <td>${drug.dose1}</td>
+                <td>${drug.dose2}</td>
+                <td>${roundDown(drug.dose1 * weight)}</td>
+                <td>${roundDown(drug.dose2 * weight)}</td>
+            </tr>
+        `).join('');
+
+        const extra2Table = document.getElementById('extra2Table');
+        extra2Table.innerHTML = extra2.map(drug => `
+            <tr>
+                <td>${drug.name}</td>
+                <td>${drug.dose1}</td>
+                <td>${drug.dose2}</td>
+                <td>${roundDown(drug.dose1 * weight)}</td>
+                <td>${roundDown(drug.dose2 * weight)}</td>
             </tr>
         `).join('');
 
